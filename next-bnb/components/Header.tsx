@@ -1,9 +1,13 @@
 import Link from "next/link";
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import AirbnbLogoIcon from "../public/static/svg/logo/logo.svg";
 import AirbnbLogoTextIcon from "../public/static/svg/logo/logo_text.svg";
 import palette from "../styles/palette";
+// import MordalPortal from "./MordalPortal";
+import useMordal from "../hooks/useModal";
+import SignUpModal from "./auth/SignUpModal";
+
 
 const Container = styled.div`
     position: sticky;
@@ -54,9 +58,17 @@ const Container = styled.div`
             }
         }
     }
+    .modal-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        
+    }
 `;
 
 const Header: React.FC = () =>{
+    const {openModal,closeModal, ModalPortal} = useMordal();
     return (
     <Container>
         <Link href="/" legacyBehavior>
@@ -66,13 +78,20 @@ const Header: React.FC = () =>{
         </a>
         </Link>
         <div className="header-auth-buttons">
-            <button className="header-sign-up-button">
+            <button 
+                type="button"
+                className="header-sign-up-button"
+                onClick={openModal}
+            >
                 회원가입
             </button>
-            <button className="header-login-button">
+            <button type="button" className="header-login-button">
                 로그인
             </button>
         </div>
+        <ModalPortal>
+            <SignUpModal />
+        </ModalPortal>
     </Container>
     );
 };
