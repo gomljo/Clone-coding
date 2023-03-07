@@ -4,7 +4,6 @@ import styled from "styled-components";
 import AirbnbLogoIcon from "../public/static/svg/logo/logo.svg";
 import AirbnbLogoTextIcon from "../public/static/svg/logo/logo_text.svg";
 import palette from "../styles/palette";
-// import MordalPortal from "./MordalPortal";
 import useMordal from "../hooks/useModal";
 import SignUpModal from "./auth/SignUpModal";
 

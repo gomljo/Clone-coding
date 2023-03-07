@@ -5,12 +5,18 @@ import MailIcon from "../../public/static/svg/auth/mail.svg";
 import PersonIcon from "../../public/static/svg/auth/person.svg";
 import OpenedEyeIcon from "../../public/static/svg/auth/opened-eye.svg";
 import ClosedEyeIcon from "../../public/static/svg/auth/closed_eye.svg";
+
 import Input from "../common/Input";
 import Selector from "../common/Selector";
 import { monthList, dayList, yaerList } from "../../lib/staticData";
 import palette from "../../styles/palette";
 
-const Container = styled.div`
+import Button from "../common/Button";
+import { SignUpAPI } from "../../lib/api/auth";
+import { useDispatch } from "react-redux";
+import { userActions } from "../../store/user";
+
+const Container = styled.form`
     width: 568px;
     padding: 32px;
     background-color: white;
@@ -56,6 +62,11 @@ const Container = styled.div`
             width: 33.3333%;
         }
     }
+    .sign-up-modal-submit-button-wrapper {
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid ${palette.gray_eb};
+    }
 `;
 
 const SignUpModal: React.FC = () => {
@@ -69,6 +80,8 @@ const SignUpModal: React.FC = () => {
     const [birthYear, setBirthYear] = useState<string | undefined>();
     const [birthDay, setBirthDay] = useState<string | undefined>();
     const [birthMonth, setBirthMonth] = useState<string | undefined>();
+
+    const dispatch = useDispatch();
 
     //* 이메일 주소 변경 시
     const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,20 +111,43 @@ const SignUpModal: React.FC = () => {
      //* 생년월일 월 변경 시
      const onChangeBirthMonth = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setBirthMonth(event.target.value);
-     }
+     };
 
      //* 생년월일 일 변경 시
      const onChangeBirthDay = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setBirthDay(event.target.value);
-     }
+     };
 
      //* 생년월일 월 변경 시
      const onChangeBirthYear = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setBirthYear(event.target.value);
-     }
+     };
+
+     //* 회원 가입 폼 제출하기
+    const onSubmitSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        try{
+            const signUpBody = {
+                email,
+                lastname,
+                firstname,
+                password,
+                birthday: new Date(
+                    `${birthYear!.replace("년", "")}-${birthMonth!.replace("월", "")}-${birthDay!.replace("일", "")}`
+                ).toISOString(),
+            };
+            
+            const { data } = await SignUpAPI(signUpBody);
+            dispatch(userActions.setLoggedUser(data));
+        }
+        catch (e) {
+            console.log(e);
+        } 
+    };
 
     return (
-        <Container>
+        <Container onSubmit={onSubmitSignUp}>
             <CloseXIcon className="modal-close-x-icon" />
             <div className="input-wrapper">
                 <Input 
@@ -187,7 +223,9 @@ const SignUpModal: React.FC = () => {
                     />
                 </div>
             </div>
-            
+            <div className="sign-up-modal-submit-button-wrapper">
+                    <Button type="submit">가입하기</Button>
+                </div>
         </Container>
     );
 };
